@@ -2,6 +2,14 @@
 
 A new Flutter project.
 
+# TODO
+
+ - ~2.5 cm barra~
+ - ~icona luna~
+ - nascondi barra app
+ - stampa copia blu
+ - ~correggi distanza~
+
 ## Getting Started
 
 This project is a starting point for a Flutter application.
