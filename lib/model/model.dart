@@ -56,6 +56,10 @@ class Model {
     return (this.totalSignals() * this.cmBetweenSignals);
   }
 
+  int distanceInMeters() {
+    return this.distanceInCentimeters() ~/ 100;
+  }
+
   int remainingDistanceInMeters() {
     return (earthMoonCm > this.distanceInCentimeters()
             ? earthMoonCm - this.distanceInCentimeters()

@@ -6,7 +6,7 @@ A new Flutter project.
 
  - ~2.5 cm barra~
  - ~icona luna~
- - nascondi barra app
+ - ~nascondi barra app~
  - stampa copia blu
  - ~correggi distanza~
 

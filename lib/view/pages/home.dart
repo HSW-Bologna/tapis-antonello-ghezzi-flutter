@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:flutter_blue_plus/flutter_blue_plus.dart';
@@ -24,6 +26,7 @@ class HomePage extends ConsumerStatefulWidget {
 
 class _HomePageState extends ConsumerState<HomePage> {
   BluetoothDevice? _espDevice;
+  bool showAppBar = false;
 
   void _setEspDevice(BluetoothDevice? device) {
     setState(() {
@@ -35,36 +38,53 @@ class _HomePageState extends ConsumerState<HomePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       resizeToAvoidBottomInset: false,
-      appBar: AppBar(
-        backgroundColor: Theme.of(context).colorScheme.inversePrimary,
-        title: const Text('To the Moon!'),
-        actions: <Widget>[
-          PopupMenuButton<String>(
-            onSelected: (value) async {
-              if (await _passwordDialogBuilder(context)) {
-                if (context.mounted) {
-                  final model = ref.read(modelProvider);
-                  Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => SettingsPage(
-                          cmBetweenSignals: model.cmBetweenSignals,
-                          meters: model.distanceInMeters())));
-                }
-              }
-            },
-            itemBuilder: (BuildContext context) {
-              return {"Impostazioni"}.map((String choice) {
-                return PopupMenuItem<String>(
-                  value: choice,
-                  child: Text(choice),
-                );
-              }).toList();
-            },
-          ),
-        ],
+      appBar: this.showAppBar
+          ? AppBar(
+              backgroundColor: Theme.of(context).colorScheme.inversePrimary,
+              title: const Text('To the Moon!'),
+              actions: <Widget>[
+                PopupMenuButton<String>(
+                  onSelected: (value) async {
+                    if (await _passwordDialogBuilder(context)) {
+                      if (context.mounted) {
+                        final model = ref.read(modelProvider);
+                        Navigator.of(context).push(MaterialPageRoute(
+                            builder: (context) => SettingsPage(
+                                  cmBetweenSignals: model.cmBetweenSignals,
+                                  meters: model.distanceInMeters(),
+                                )));
+                      }
+                    }
+                  },
+                  itemBuilder: (BuildContext context) {
+                    return {"Impostazioni"}.map((String choice) {
+                      return PopupMenuItem<String>(
+                        value: choice,
+                        child: Text(choice),
+                      );
+                    }).toList();
+                  },
+                ),
+              ],
+            )
+          : null,
+      body: GestureDetector(
+        behavior: HitTestBehavior.opaque,
+        onDoubleTap: () {
+          setState(() {
+            this.showAppBar = true;
+          });
+          Timer(const Duration(seconds: 5), () {
+            setState(() {
+              this.showAppBar = false;
+            });
+          });
+        },
+        child: (_espDevice == null)
+            ? DeviceSearch(setDeviceCallback: _setEspDevice)
+            : DeviceScreen(
+                device: _espDevice, setDeviceCallback: _setEspDevice),
       ),
-      body: (_espDevice == null)
-          ? DeviceSearch(setDeviceCallback: _setEspDevice)
-          : DeviceScreen(device: _espDevice, setDeviceCallback: _setEspDevice),
     );
   }
 }
